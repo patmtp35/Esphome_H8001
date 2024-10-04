@@ -1,0 +1,83 @@
+##########################################################
+# Utilisation du H801 avec esphome en mode light RVB
+# cree une commande light On/On Lux et RGB
+##########################################################
+# Attention supprimé la section api key dans le common
+# V1.1
+#######
+
+substitutions:
+  #############################
+  # comomon substitution #####
+  ############################ 
+  name: esph801
+  # nonm affiché dans l'interface #
+  friendly_name: H801-Esp
+  #######################################
+  sensor_prefix: ""
+  device_description: "Use H801 module with RGB Strip led"
+  time_timezone: "Europe/Paris"
+  projectname: "H801 Hack "
+  appversion: 1.1.0
+  log_level: "INFO"
+  baud_ratelog: "0"
+  #api_encryption_key: !secret h801key
+  ota_pswd: !secret ota_pswd
+  ap_pwd: !secret ota_pswd
+  adress_ip: !secret ip_h801
+  gateway_ip: !secret ip_gateway
+  dns_ip: !secret ip_dns
+  time_id: ha_time
+  time_platform: homeassistant
+  
+  ###############################
+  ### definition de la carte ESP
+  ############################### 
+
+esp8266:
+  board: esp01_1m
+###################################
+### inclusion de la partie commune 
+###################################
+
+<<: !include .common.yaml
+ 
+# Allow provisioning Wi-Fi via serial
+# improv_serial:
+
+dashboard_import:
+  package_import_url: github://esphome/example-configs/esphome-web/esp8266.yaml@main
+  import_full_config: true
+
+# To have a "next url" for improv serial
+#web_server:
+
+output:
+  - platform: esp8266_pwm
+    pin: 12
+    frequency: 1000 Hz
+    id: pwm_b
+  - platform: esp8266_pwm
+    pin: 13
+    frequency: 1000 Hz
+    id: pwm_g
+  - platform: esp8266_pwm
+    pin: 15
+    frequency: 1000 Hz
+    id: pwm_r
+  - platform: esp8266_pwm
+    pin: 14
+    frequency: 1000 Hz
+    id: pwm_w1
+  - platform: esp8266_pwm
+    pin: 4
+    frequency: 1000 Hz
+    id: pwm_w2
+    
+light:
+  - platform: rgbw
+    name: "H801 Light"
+    red: pwm_r
+    green: pwm_g
+    blue: pwm_b
+    white: pwm_w1
